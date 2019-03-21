@@ -13,6 +13,11 @@
 		FA8838F92242EDA00085E4FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA8838F82242EDA00085E4FD /* Assets.xcassets */; };
 		FA8838FC2242EDA00085E4FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA8838FA2242EDA00085E4FD /* LaunchScreen.storyboard */; };
 		FA8839042242EDBB0085E4FD /* SpotifyiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA8839032242EDBB0085E4FD /* SpotifyiOS.framework */; };
+		FA88390F2243C0F50085E4FD /* AnimatedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA88390E2243C0F50085E4FD /* AnimatedButton.swift */; };
+		FA8839112243CCC00085E4FD /* HomePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8839102243CCC00085E4FD /* HomePlayerViewController.swift */; };
+		FA883913224412230085E4FD /* NetworkOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA883912224412230085E4FD /* NetworkOperation.swift */; };
+		FA883916224412890085E4FD /* AccessControlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA883915224412890085E4FD /* AccessControlManager.swift */; };
+		FA88391822441F3E0085E4FD /* SearchResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA88391722441F3E0085E4FD /* SearchResultViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +30,11 @@
 		FA8838FD2242EDA00085E4FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA8839032242EDBB0085E4FD /* SpotifyiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyiOS.framework; sourceTree = "<group>"; };
 		FA8839052242EE4C0085E4FD /* FeelTheBeatInside-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeelTheBeatInside-Bridging-Header.h"; sourceTree = "<group>"; };
+		FA88390E2243C0F50085E4FD /* AnimatedButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedButton.swift; sourceTree = "<group>"; };
+		FA8839102243CCC00085E4FD /* HomePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePlayerViewController.swift; sourceTree = "<group>"; };
+		FA883912224412230085E4FD /* NetworkOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkOperation.swift; sourceTree = "<group>"; };
+		FA883915224412890085E4FD /* AccessControlManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessControlManager.swift; sourceTree = "<group>"; };
+		FA88391722441F3E0085E4FD /* SearchResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +69,9 @@
 			isa = PBXGroup;
 			children = (
 				FA8838EE2242ED9F0085E4FD /* AppDelegate.swift */,
-				FA8838F02242ED9F0085E4FD /* AuthenticationViewController.swift */,
+				FA883914224412550085E4FD /* Utils */,
+				FA88390D2243C04A0085E4FD /* Controllers */,
+				FA88390C2243C03C0085E4FD /* Views */,
 				FA88390922436EDA0085E4FD /* Operations */,
 				FA8838F82242EDA00085E4FD /* Assets.xcassets */,
 				FA8838FA2242EDA00085E4FD /* LaunchScreen.storyboard */,
@@ -74,8 +86,35 @@
 		FA88390922436EDA0085E4FD /* Operations */ = {
 			isa = PBXGroup;
 			children = (
+				FA883912224412230085E4FD /* NetworkOperation.swift */,
 			);
 			path = Operations;
+			sourceTree = "<group>";
+		};
+		FA88390C2243C03C0085E4FD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FA88390E2243C0F50085E4FD /* AnimatedButton.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FA88390D2243C04A0085E4FD /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				FA8838F02242ED9F0085E4FD /* AuthenticationViewController.swift */,
+				FA8839102243CCC00085E4FD /* HomePlayerViewController.swift */,
+				FA88391722441F3E0085E4FD /* SearchResultViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		FA883914224412550085E4FD /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				FA883915224412890085E4FD /* AccessControlManager.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -150,6 +189,11 @@
 			files = (
 				FA8838F72242EDA00085E4FD /* FeelTheBeatInside.xcdatamodeld in Sources */,
 				FA8838F12242ED9F0085E4FD /* AuthenticationViewController.swift in Sources */,
+				FA8839112243CCC00085E4FD /* HomePlayerViewController.swift in Sources */,
+				FA883916224412890085E4FD /* AccessControlManager.swift in Sources */,
+				FA88390F2243C0F50085E4FD /* AnimatedButton.swift in Sources */,
+				FA883913224412230085E4FD /* NetworkOperation.swift in Sources */,
+				FA88391822441F3E0085E4FD /* SearchResultViewController.swift in Sources */,
 				FA8838EF2242ED9F0085E4FD /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -304,7 +348,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "FeelTheBeatInside/FeelTheBeatInside-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -328,7 +372,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "FeelTheBeatInside/FeelTheBeatInside-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
