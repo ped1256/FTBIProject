@@ -8,17 +8,12 @@
 
 import UIKit
 
-class AuthenticationViewController: UIViewController, SPTSessionManagerDelegate {
+class AuthenticationViewController: UIViewController {
     
-    func sessionManager(manager: SPTSessionManager, didInitiate session: SPTSession) {
-        print("logou")
-        self.configuration.playURI = "spotify:track:20I6sIOMTCkB6w7ryavxtO"
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        startSession()
     }
-    
-    func sessionManager(manager: SPTSessionManager, didFailWith error: Error) {
-        print("")
-    }
-    
     
     let SpotifyClientID = "9b38fc69950848d3821e06544d6eab4a"
     let SpotifyRedirectURL = URL(string: "spotify-ios-quick-start://spotify-login-callback")!
@@ -38,25 +33,26 @@ class AuthenticationViewController: UIViewController, SPTSessionManagerDelegate 
         let manager = SPTSessionManager(configuration: self.configuration, delegate: self)
         return manager
     }()
-    
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        startSession()
-    }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        self.sessionManager.application(app, open: url, options: options)
-        return true
-    }
 
     private func startSession() {
         let requestedScopes: SPTScope = [.appRemoteControl]
         self.sessionManager.initiateSession(with: requestedScopes, options: .default)
     }
-    
-    @objc private func playSomething(_ sender: Any) {
-        
-    }
 }
 
+extension AuthenticationViewController: SPTSessionManagerDelegate {
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        self.sessionManager.application(app, open: url, options: options)
+        return true
+    }
+    
+    func sessionManager(manager: SPTSessionManager, didInitiate session: SPTSession) {
+        print("logou")
+        self.configuration.playURI = "spotify:track:20I6sIOMTCkB6w7ryavxtO"
+    }
+    
+    func sessionManager(manager: SPTSessionManager, didFailWith error: Error) {
+        print("")
+    }
+}
