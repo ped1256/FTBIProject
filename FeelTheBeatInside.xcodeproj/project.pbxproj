@@ -13,6 +13,7 @@
 		FA8838F72242EDA00085E4FD /* FeelTheBeatInside.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FA8838F52242EDA00085E4FD /* FeelTheBeatInside.xcdatamodeld */; };
 		FA8838F92242EDA00085E4FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA8838F82242EDA00085E4FD /* Assets.xcassets */; };
 		FA8838FC2242EDA00085E4FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA8838FA2242EDA00085E4FD /* LaunchScreen.storyboard */; };
+		FA8839042242EDBB0085E4FD /* SpotifyiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA8839032242EDBB0085E4FD /* SpotifyiOS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,8 @@
 		FA8838F82242EDA00085E4FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FA8838FB2242EDA00085E4FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA8838FD2242EDA00085E4FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA8839032242EDBB0085E4FD /* SpotifyiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyiOS.framework; sourceTree = "<group>"; };
+		FA8839052242EE4C0085E4FD /* FeelTheBeatInside-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeelTheBeatInside-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA8839042242EDBB0085E4FD /* SpotifyiOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +67,8 @@
 				FA8838FA2242EDA00085E4FD /* LaunchScreen.storyboard */,
 				FA8838FD2242EDA00085E4FD /* Info.plist */,
 				FA8838F52242EDA00085E4FD /* FeelTheBeatInside.xcdatamodeld */,
+				FA8839032242EDBB0085E4FD /* SpotifyiOS.framework */,
+				FA8839052242EE4C0085E4FD /* FeelTheBeatInside-Bridging-Header.h */,
 			);
 			path = FeelTheBeatInside;
 			sourceTree = "<group>";
@@ -288,13 +294,19 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WEP9UKL7GT;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/FeelTheBeatInside",
+				);
 				INFOPLIST_FILE = FeelTheBeatInside/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = pedro.emanuel.FeelTheBeatInside;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "FeelTheBeatInside/FeelTheBeatInside-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -306,13 +318,19 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WEP9UKL7GT;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/FeelTheBeatInside",
+				);
 				INFOPLIST_FILE = FeelTheBeatInside/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = pedro.emanuel.FeelTheBeatInside;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "FeelTheBeatInside/FeelTheBeatInside-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
