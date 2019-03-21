@@ -19,6 +19,7 @@ class ViewController: UIViewController, SPTSessionManagerDelegate {
         print("")
     }
     
+    
     let SpotifyClientID = "9b38fc69950848d3821e06544d6eab4a"
     let SpotifyRedirectURL = URL(string: "spotify-ios-quick-start://spotify-login-callback")!
     
