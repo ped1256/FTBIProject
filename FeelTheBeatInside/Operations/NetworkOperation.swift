@@ -9,11 +9,12 @@
 import Foundation
 
 class NetworkOperation: NSObject {
-    
-    static func search(query: String, completion: @escaping () -> ()) {
-        
+        static func search(query: String, completion: @escaping (SearchArtistsDecode) -> ()) {
+            
+        guard query.count > 2 else { return }
+
         let urlString = "https://api.spotify.com/v1/search?q=\(query)&type=artist".replacingOccurrences(of: " ", with: "%20").folding(options: .diacriticInsensitive, locale: .current)
-        
+
         let weakUrl = URL(string: urlString)
         
         guard let url = weakUrl else { return }
@@ -21,10 +22,29 @@ class NetworkOperation: NSObject {
         request.setValue("Bearer \(AccessControllManager.shared.accessToken)", forHTTPHeaderField: "Authorization")
         
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            completion()
+            do {
+                guard error == nil, let dataResponse = data else { return }
+                
+                let artists = try JSONDecoder().decode(SearchArtistsDecode.self, from: dataResponse)
+
+                completion(artists)
+                
+            } catch let parsingError {
+                print("Error", parsingError)
+            }
         }
 
         task.resume()
     }
     
+    static func parseImage(path: String, completion: @escaping (UIImage) -> ()) {
+        let weakUrl = URL(string: path)
+        guard let url = weakUrl else { return }
+        
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            guard error == nil, let dataResponse = data, let image = UIImage(data: dataResponse) else { return }
+            completion(image)
+        }
+        task.resume()
+    }
 }
