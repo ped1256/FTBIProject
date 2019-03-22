@@ -10,51 +10,55 @@ import Foundation
 
 class HomePlayerViewController: UIViewController, UISearchBarDelegate {
     
-    private var headerView = UIView()
-    
-    private var searchBar = UISearchBar()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = #colorLiteral(red: 0.2156862745, green: 0.1568627451, blue: 0.2666666667, alpha: 1)
-        
+        self.view.backgroundColor = #colorLiteral(red: 0.3227999919, green: 0.3495026053, blue: 0.3882948697, alpha: 1)
         buildUI()
+        self.navigationController?.isNavigationBarHidden = false
     }
     
-    private func buildUI() {
-        view.addSubview(headerView)
+    private var searchbutton = UIButton()
+    
+    private lazy var searchController: UISearchController = {
+        let searchResultController = SearchResultViewController()
+        let searchController = UISearchController(searchResultsController: searchResultController)
         
-        view.addSubview(searchBar)
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
-        searchBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        searchBar.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        searchBar.heightAnchor.constraint(equalToConstant: 90).isActive = true
-        searchBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
-        searchBar.layer.borderWidth = 0
-        searchBar.barTintColor = #colorLiteral(red: 0.4751030117, green: 0.4056995018, blue: 0.6041402284, alpha: 1).withAlphaComponent(0.7)
+        searchController.searchBar.delegate = self
+        searchController.searchResultsUpdater = searchResultController
+        searchController.searchBar.barTintColor = #colorLiteral(red: 0.3227999919, green: 0.3495026053, blue: 0.3882948697, alpha: 1)
         
-        if let textfield = searchBar.value(forKey: "searchField") as? UITextField {
+        if let textfield = searchController.searchBar.value(forKey: "searchField") as? UITextField {
             
-            textfield.backgroundColor =  #colorLiteral(red: 0.3871495404, green: 0.3307580735, blue: 0.5, alpha: 1)
-            textfield.textColor = .white
-
-            textfield.attributedPlaceholder = NSAttributedString(string: textfield.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor : UIColor.white])
+            textfield.backgroundColor = #colorLiteral(red: 0.1782757183, green: 0.193023016, blue: 0.2144471764, alpha: 1)
+            textfield.textColor = .gray
+            
+            textfield.attributedPlaceholder = NSAttributedString(string: "Procurar Artistas", attributes: [NSAttributedString.Key.foregroundColor : #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)])
             
             if let leftView = textfield.leftView as? UIImageView {
                 leftView.image = leftView.image?.withRenderingMode(.alwaysTemplate)
-                leftView.tintColor = UIColor.white.withAlphaComponent(0.8)
+                leftView.tintColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
             }
         }
         
-        searchBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(searchBarAction(_:))))
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes([NSAttributedString.Key(rawValue: NSAttributedString.Key.foregroundColor.rawValue): UIColor.black], for: .normal)
         
+        if let searchbarCancelButton = searchController.searchBar.value(forKey: "_cancelButton") as? UIButton {
+            searchbarCancelButton.setTitleColor(.black, for: .normal)
+        }
+        
+        return searchController
+    }()
+    
+    private func buildUI() {
+
+        let item = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchBarAction))
+        item.tintColor = .black
+        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.1782757183, green: 0.193023016, blue: 0.2144471764, alpha: 1)
+        navigationItem.title = "Artistas"
+        navigationItem.setRightBarButton(item, animated: true)
     }
     
     @objc private func searchBarAction(_ sender: Any) {
-        let searchResultController = SearchResultViewController()
-        let searchController = UISearchController(searchResultsController: searchResultController)
-        searchController.searchBar.delegate = self
-        searchController.searchResultsUpdater = searchResultController
         present(searchController, animated: true, completion: nil)
     }
 }

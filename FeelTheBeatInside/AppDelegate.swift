@@ -83,7 +83,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SPTSessionManagerDelegate
         window = UIWindow(frame: UIScreen.main.bounds)
         
         let nav = UINavigationController()
-        let launchScreen = AuthenticationViewController()
+        
+//        let launchScreen = AuthenticationViewController()
+        let launchScreen = HomePlayerViewController()
         nav.isNavigationBarHidden = true
         nav.viewControllers = [launchScreen]
         

@@ -93,7 +93,7 @@ class AuthenticationViewController: UIViewController {
                     
                 }, completion: { (finished) in
                     let homePlayerViewController = HomePlayerViewController()
-                    self.navigationController?.present(homePlayerViewController, animated: false, completion: nil)
+                    self.navigationController?.pushViewController(homePlayerViewController, animated: false)
                 })
             })
         }

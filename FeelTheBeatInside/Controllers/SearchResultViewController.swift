@@ -25,7 +25,7 @@ class SearchResultViewController: UIViewController, UISearchResultsUpdating, UIT
     }
     
     func updateSearchResults(for searchController: UISearchController) {
-        
+        guard let text = searchController.searchBar.text else { return }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
