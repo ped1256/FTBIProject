@@ -8,9 +8,14 @@
 
 import Foundation
 
+protocol SearchResultViewControllerDelegate {
+    func didSelectArtist(artist: Artist)
+}
+
 class SearchResultViewController: UIViewController, UISearchResultsUpdating, UITableViewDelegate, UITableViewDataSource {
     
     private let tableView = UITableView()
+    
     public var viewDisapear: (() -> ())?
     
     private var artists: SearchArtistsDecode? {
@@ -42,7 +47,6 @@ class SearchResultViewController: UIViewController, UISearchResultsUpdating, UIT
         tableView.keyboardDismissMode = .onDrag
         tableView.register(ArtistTableViewCell.self, forCellReuseIdentifier: ArtistTableViewCell.identifier)
     }
-    
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
         

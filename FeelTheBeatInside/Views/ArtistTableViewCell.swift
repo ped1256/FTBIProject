@@ -11,6 +11,7 @@ import Foundation
 class ArtistTableViewCell: UITableViewCell {
 
     static var identifier = "artistCellIdentifier"
+    
     var artist: Artist? {
         didSet {
             updateUI()
@@ -28,6 +29,15 @@ class ArtistTableViewCell: UITableViewCell {
         return l
     }()
     
+    
+    @objc public lazy var accessorySpinner: SpinnerView = {
+        let v = SpinnerView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        
+        v.translatesAutoresizingMaskIntoConstraints = false
+        
+        return v
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         buildUI()
@@ -43,6 +53,7 @@ class ArtistTableViewCell: UITableViewCell {
         
         contentView.addSubview(artistImageview)
         contentView.addSubview(artisNameLabel)
+        contentView.addSubview(accessorySpinner)
         
         contentView.backgroundColor = .clear
         
@@ -60,16 +71,31 @@ class ArtistTableViewCell: UITableViewCell {
         artisNameLabel.leftAnchor.constraint(equalTo: artistImageview.rightAnchor, constant: 20).isActive = true
         artisNameLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20).isActive = true
         artisNameLabel.centerYAnchor.constraint(equalTo: artistImageview.centerYAnchor).isActive = true
+
+        accessorySpinner.centerXAnchor.constraint(equalTo: artistImageview.centerXAnchor).isActive = true
+        accessorySpinner.centerYAnchor.constraint(equalTo: artistImageview.centerYAnchor).isActive = true
+        accessorySpinner.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        accessorySpinner.widthAnchor.constraint(equalToConstant: 24).isActive = true
+    }
+    
+    override func prepareForReuse() {
+        self.imageView?.image = nil
     }
     
     private func updateUI() {
         guard let artist = self.artist, let imageURI = artist.images.first?.url else { return }
         artisNameLabel.text = artist.name
         
+        accessorySpinner.state = .spinning
+        artistImageview.isHidden = true
+        
         NetworkOperation.parseImage(path: imageURI) { [weak self] image in
-            DispatchQueue.main.async {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self?.artistImageview.isHidden = false
                 self?.artistImageview.image = image
+                self?.accessorySpinner.state = .idle
             }
         }
     }
+    
 }

@@ -10,7 +10,6 @@ import Foundation
 
 struct SearchArtistsDecode: Decodable {
     let artists: Artists
-    
 }
 
 struct Artists: Decodable {
@@ -27,7 +26,6 @@ struct Artist: Decodable {
     let name: String
     let images: [ArtistImage]
     let uri: String
-    
 }
 
 struct ArtistImage: Decodable {
