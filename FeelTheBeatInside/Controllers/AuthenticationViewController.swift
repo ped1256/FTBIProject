@@ -81,12 +81,12 @@ class AuthenticationViewController: UIViewController {
     }
     
     @objc private func finishButtonAnimation() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        DispatchQueue.main.async {
             UIView.animate(withDuration: 0.3, animations: {
                 self.logginButton.backgroundColor = #colorLiteral(red: 0.3853656719, green: 0.4172438343, blue: 0.4635548858, alpha: 1)
                 self.animating.stopAnimating()
                 self.logginButton.frame = self.view.frame
-
+                
             }, completion: { (finished) in
                 
                 UIView.animate(withDuration: 0.3, animations: {

@@ -60,8 +60,6 @@ class ArtistTableViewCell: UITableViewCell {
         
         contentView.backgroundColor = .clear
         
-        contentView.backgroundColor = UIColor.black.withAlphaComponent(0.0)
-        
         artistImageview.translatesAutoresizingMaskIntoConstraints = false
         artistImageview.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: 20).isActive = true
         artistImageview.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor).isActive = true

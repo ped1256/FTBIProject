@@ -16,6 +16,11 @@ struct Track: Decodable {
     let album: Album
     let uri: String
     let href: String
+    let msTime: Int
+    
+    private enum CodingKeys: String, CodingKey {
+        case id, name, album, uri, href, msTime = "duration_ms"
+    }
 }
 
 struct Album: Decodable {

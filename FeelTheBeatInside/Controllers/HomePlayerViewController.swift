@@ -29,7 +29,7 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         
         t.translatesAutoresizingMaskIntoConstraints = false
         t.backgroundColor = .clear
-        t.register(UITableViewCell.self, forCellReuseIdentifier: "trackCellIdentifier")
+        t.register(TrackTableViewCell.self, forCellReuseIdentifier: TrackTableViewCell.identifier)
         t.tableFooterView = UIView()
         t.delegate = self
         t.dataSource = self
@@ -41,6 +41,14 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
     private let emptyArtistimageView = UIImageView()
     private let backgroundBlurView = UIBlurEffect()
     private let artistImageView = UIImageView()
+    
+    private lazy var transparentPlayImageView: UIImageView = {
+        let l = UIImageView()
+        l.translatesAutoresizingMaskIntoConstraints = false
+        l.isHidden = true
+        l.image = UIImage(named: "play_buttom")
+        return l
+    }()
     
     private let spotifyWhiteLogo: UIImageView = {
         let i = UIImageView()
@@ -91,10 +99,11 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
     
     private func buildUI() {
         buildNavigation()
-        buildDarkView()
         buildArtistInfo()
         buildTableView()
         buildSpotifyWhiteLogo()
+        buildTransparentPlayImageView()
+        buildDarkView()
     }
     
     private func buildNavigation() {
@@ -110,7 +119,7 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
     
     private func buildDarkView() {
         darkView.frame = self.view.frame
-        darkView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        darkView.backgroundColor = UIColor.black.withAlphaComponent(0.8)
         darkView.isHidden = true
         
         self.view.addSubview(darkView)
@@ -121,16 +130,22 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         view.addSubview(artistNameLabel)
         
         artistImageView.translatesAutoresizingMaskIntoConstraints = false
-        artistImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        artistImageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        artistImageView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 3.5).isActive = true
+        artistImageView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 3.5).isActive = true
         artistImageView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        artistImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 64).isActive = true
+        if UIScreen.isIphoneX() {
+            artistImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 88).isActive = true
+        } else {
+            artistImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 64).isActive = true
+        }
+        
         artistImageView.clipsToBounds = true
         artistImageView.backgroundColor = #colorLiteral(red: 0.3227999919, green: 0.3495026053, blue: 0.3882948697, alpha: 1)
         artistImageView.isHidden = true
         
         artistNameLabel.translatesAutoresizingMaskIntoConstraints = false
         artistNameLabel.leftAnchor.constraint(equalTo: artistImageView.rightAnchor, constant: 20).isActive = true
+        artistNameLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -65).isActive = true
         artistNameLabel.topAnchor.constraint(equalTo: artistImageView.topAnchor, constant: 15).isActive = true
         artistNameLabel.textColor = .white
         artistNameLabel.isHidden = true
@@ -145,6 +160,7 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
             self.artistImageView.isHidden = false
             self.emptyArtistimageView.isHidden = true
             self.spotifyWhiteLogo.isHidden = false
+            self.transparentPlayImageView.isHidden = false
             
             self.tableView.reloadData()
         }
@@ -168,9 +184,16 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         
     }
     
+    private func buildTransparentPlayImageView() {
+        view.addSubview(transparentPlayImageView)
+        transparentPlayImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        transparentPlayImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        transparentPlayImageView.centerYAnchor.constraint(equalTo: artistImageView.centerYAnchor).isActive = true
+        transparentPlayImageView.centerXAnchor.constraint(equalTo: artistImageView.centerXAnchor).isActive = true
+    }
+    
     @objc private func searchBarAction(_ sender: Any) {
         self.darkView.isHidden = false
-        self.artistNameLabel.isHidden = true
         present(searchController, animated: true, completion: nil)
     }
 }
@@ -197,19 +220,16 @@ extension HomePlayerViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
+        return 55
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "trackCellIdentifier", for: indexPath) as UITableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: TrackTableViewCell.identifier, for: indexPath) as? TrackTableViewCell else { return UITableViewCell() }
         
         guard let track = self.artist?.tracks?[indexPath.row] else { return UITableViewCell() }
-        cell.backgroundColor = .clear
-        cell.textLabel?.textColor = .white
-        cell.contentView.backgroundColor = .clear
-        cell.textLabel?.text = track.name
+        cell.trackCount = indexPath.row + 1
+        cell.track = track
         
-        cell.accessoryView = teste
         return cell
     }
     
