@@ -47,4 +47,24 @@ class NetworkOperation: NSObject {
         }
         task.resume()
     }
+    
+    static func getArtistTracks(path: String, completion: @escaping (Tracks) -> ()) {
+        let weakUrl = URL(string: "https://api.spotify.com/v1/artists/\(path)/top-tracks?country=BR")
+        guard let url = weakUrl else { return }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(AccessControllManager.shared.accessToken)", forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            do {
+                guard let dataResponse = data else { return }
+                let decodableTracks = try JSONDecoder().decode(Tracks.self, from: dataResponse)
+                completion(decodableTracks)
+                
+            } catch let error {
+                print("Error", error)
+            }
+        }
+        
+        task.resume()
+    }
 }

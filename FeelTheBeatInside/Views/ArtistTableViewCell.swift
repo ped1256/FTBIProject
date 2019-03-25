@@ -12,7 +12,10 @@ class ArtistTableViewCell: UITableViewCell {
 
     static var identifier = "artistCellIdentifier"
     
-    var artist: Artist? {
+    var delegate: ((ArtistViewModel) -> ())?
+    var artistViewModel: ArtistViewModel?
+    
+    var artist: ArtistViewModel? {
         didSet {
             updateUI()
         }
@@ -76,26 +79,35 @@ class ArtistTableViewCell: UITableViewCell {
         accessorySpinner.centerYAnchor.constraint(equalTo: artistImageview.centerYAnchor).isActive = true
         accessorySpinner.heightAnchor.constraint(equalToConstant: 24).isActive = true
         accessorySpinner.widthAnchor.constraint(equalToConstant: 24).isActive = true
+        
+        self.contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(cellSelected(_:))))
+    }
+    
+    @objc private func cellSelected(_ sender: Any) {
+        guard let artist = self.artist else { return }
+        self.delegate?(artist)
     }
     
     override func prepareForReuse() {
         self.imageView?.image = nil
+        self.imageView?.isHidden = true
     }
     
     private func updateUI() {
-        guard let artist = self.artist, let imageURI = artist.images.first?.url else { return }
-        artisNameLabel.text = artist.name
-        
+        artisNameLabel.text = artist?.name
         accessorySpinner.state = .spinning
-        artistImageview.isHidden = true
+        self.imageView?.image = nil
         
-        NetworkOperation.parseImage(path: imageURI) { [weak self] image in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self?.artistImageview.isHidden = false
+        artist?.imageCompletion = { [weak self] image in
+            DispatchQueue.main.async {
                 self?.artistImageview.image = image
                 self?.accessorySpinner.state = .idle
             }
         }
+
+        artisNameLabel.isHidden = false
+        artistImageview.isHidden = false
+
     }
     
 }

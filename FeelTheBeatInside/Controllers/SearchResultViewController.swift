@@ -9,12 +9,13 @@
 import Foundation
 
 protocol SearchResultViewControllerDelegate {
-    func didSelectArtist(artist: Artist)
+    func didSelectArtist(artist: ArtistViewModel)
 }
 
 class SearchResultViewController: UIViewController, UISearchResultsUpdating, UITableViewDelegate, UITableViewDataSource {
     
     private let tableView = UITableView()
+    var delegate: SearchResultViewControllerDelegate?
     
     public var viewDisapear: (() -> ())?
     
@@ -73,8 +74,15 @@ class SearchResultViewController: UIViewController, UISearchResultsUpdating, UIT
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ArtistTableViewCell.identifier, for: indexPath) as? ArtistTableViewCell else { return UITableViewCell() }
         
-        guard let artist = self.artists?.artists.items?[indexPath.row] else { return UITableViewCell() }
-        cell.artist = artist
+        guard let count = self.artists?.artists.items?.count, indexPath.row < count, let artist = self.artists?.artists.items?[indexPath.row] else { return UITableViewCell() }
+        
+        let artistViewModel = ArtistViewModel(with: artist)
+        cell.artist = artistViewModel
+        
+        cell.delegate = { [weak self] artist in
+            self?.delegate?.didSelectArtist(artist: artist)
+            self?.dismiss(animated: true, completion: nil)
+        }
         
         return cell
     }

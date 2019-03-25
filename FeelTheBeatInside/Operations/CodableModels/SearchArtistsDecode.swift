@@ -24,12 +24,15 @@ struct Artists: Decodable {
 struct Artist: Decodable {
     let genres: [String]
     let name: String
-    let images: [ArtistImage]
-    let uri: String
+    let href: String
+    let images: [ImageDecodable]
+    let id: String
 }
 
-struct ArtistImage: Decodable {
+struct ImageDecodable: Decodable {
     let height: Int
     let url: String
     let width: Int
 }
+
+// criar decodable for tracks
