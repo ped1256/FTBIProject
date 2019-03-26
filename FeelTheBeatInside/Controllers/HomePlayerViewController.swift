@@ -231,6 +231,7 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
                 self.trackNameLabel.text = self.activePlayer?.name
                 self.transparentPlayImageView.isHidden = false
                 self.nextTrackButton.isHidden = false
+                self.albumImageView.image = self.activePlayer?.image
                 self.previousTrackButton.isHidden = false
                 self.progressView.isHidden = false
                 self.trackNameLabel.isHidden = false
