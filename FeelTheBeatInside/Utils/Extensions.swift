@@ -17,3 +17,11 @@ extension UIScreen {
         }
     }
 }
+
+extension Notification.Name {
+    static let playItemNotificationName = NSNotification.Name.init("playItemNotificationName")
+    static let finishedSessionNotificationName = NSNotification.Name.init("finishedSessionNotificationName")
+    static let startSessionNotificationName = NSNotification.Name.init("startSessionNotificationName")
+    
+
+}

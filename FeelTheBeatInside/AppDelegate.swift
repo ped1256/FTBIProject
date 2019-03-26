@@ -23,7 +23,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SPTSessionManagerDelegate
             let tokenRefreshURL = URL(string: "https://ftbi.herokuapp.com/api/refresh_token") {
             self.configuration.tokenSwapURL = tokenSwapURL
             self.configuration.tokenRefreshURL = tokenRefreshURL
-//            self.configuration.playURI = ""
+            
+            // play this song in start because this song is so nice rs rs
+            // music suggestion for your guys.
+            self.configuration.playURI = "spotify:track:0eDQj41kzBhMKQIkTt6OJR"
         }
         let manager = SPTSessionManager(configuration: self.configuration, delegate: self)
         return manager
@@ -42,24 +45,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SPTSessionManagerDelegate
     
     func sessionManager(manager: SPTSessionManager, didInitiate session: SPTSession) {
         self.appRemote.connectionParameters.accessToken = session.accessToken
-        self.appRemote.connect()
+        DispatchQueue.main.async { [weak self] in
+            self?.appRemote.connect()
+        }
         
         UserDefaults.standard.set(session.accessToken, forKey: Constants.userDefaultsAccessTokenKey)
-        NotificationCenter.default.post(Notification(name: Notification.Name.init(rawValue: "finishedSessionNotificationName")))
+        NotificationCenter.default.post(Notification(name: .finishedSessionNotificationName))
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(play(_:)), name: .playItemNotificationName, object: nil)
     }
     
     func sessionManager(manager: SPTSessionManager, didFailWith error: Error) {
         
     }
     
+    @objc private func play(_ notification: NSNotification){
+        guard let uri = notification.object as? String else { return }
+        self.appRemote.playerAPI?.play(uri, callback: nil)
+    }
+    
     func appRemoteDidEstablishConnection(_ appRemote: SPTAppRemote) {
         // Connection was successful, you can begin issuing commands
+        self.appRemote.playerAPI?.pause(nil)
         self.appRemote.playerAPI?.delegate = self
         self.appRemote.playerAPI?.subscribe(toPlayerState: { (result, error) in
             if let error = error {
                 debugPrint(error.localizedDescription)
             }
         })
+
     }
     
     func appRemote(_ appRemote: SPTAppRemote, didFailConnectionAttemptWithError error: Error?) {
@@ -71,9 +85,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SPTSessionManagerDelegate
     }
     
     func playerStateDidChange(_ playerState: SPTAppRemotePlayerState) {
-        debugPrint("Track name: %@", playerState.track.name)
+        // update state here
+        debugPrint("Track name: %@", playerState.playbackPosition)
+        
     }
-    
     
     var window: UIWindow?
 
@@ -84,15 +99,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SPTSessionManagerDelegate
         
         let nav = UINavigationController()
         
-        let launchScreen = AuthenticationViewController()
-//        let launchScreen = HomePlayerViewController()
+//        let launchScreen = AuthenticationViewController()
+        let launchScreen = HomePlayerViewController()
         nav.isNavigationBarHidden = true
         nav.viewControllers = [launchScreen]
         
         self.window?.rootViewController = nav
         self.window?.makeKeyAndVisible()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(startSession), name: NSNotification.Name.init(rawValue: "startSessionNotificationName"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(startSession), name: .startSessionNotificationName, object: nil)
         
         return true
     }
@@ -107,6 +122,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SPTSessionManagerDelegate
             self.appRemote.disconnect()
         }
     }
+    
     func applicationDidBecomeActive(_ application: UIApplication) {
         if let _ = self.appRemote.connectionParameters.accessToken {
             self.appRemote.connect()

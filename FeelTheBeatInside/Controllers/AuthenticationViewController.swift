@@ -60,7 +60,7 @@ class AuthenticationViewController: UIViewController {
         animating.heightAnchor.constraint(equalToConstant: 100).isActive = true
         animating.widthAnchor.constraint(equalToConstant: 100).isActive = true
         
-        NotificationCenter.default.addObserver(self, selector: #selector(finishButtonAnimation), name: NSNotification.Name.init(rawValue: "finishedSessionNotificationName"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishButtonAnimation), name: .finishedSessionNotificationName, object: nil)
     }
     
     @objc func actionButton(sender: Any) {
@@ -76,7 +76,7 @@ class AuthenticationViewController: UIViewController {
         UIView.animate(withDuration: 0.5, animations: {
             self.logginButton.frame = CGRect(x: self.logginButtonFrame.origin.x + (self.logginButtonFrame.width / 2) - (50 / 2) , y: self.logginButtonFrame.origin.y, width: 50, height: 50)
         }) { (finished) in
-            NotificationCenter.default.post(Notification(name: Notification.Name.init(rawValue: "startSessionNotificationName")))
+            NotificationCenter.default.post(Notification(name: .startSessionNotificationName))
         }
     }
     

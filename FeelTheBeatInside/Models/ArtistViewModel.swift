@@ -15,7 +15,7 @@ class ArtistViewModel: NSObject {
     var href: String?
     var id: String?
     var imageCompletion: ((UIImage) -> ())?
-    var tracks: [Track]?
+    var tracks: [TrackViewModel]?
     
     init(with object: Artist) {
         super.init()
@@ -24,14 +24,20 @@ class ArtistViewModel: NSObject {
         self.imagePath = object.images.first?.url
         self.id = object.id
         self.href = object.href
-        parseImage()
-    }
-    
-    private func parseImage() {
-        guard let path = imagePath else { return  }
-        NetworkOperation.parseImage(path: path) { image in
-            self.imageCompletion?(image)
-            self.image = image
+        
+        guard let path = self.imagePath else { return }
+        
+        Utils.parseImage(path: path) { [weak self] image in
+            self?.image = image
+            self?.imageCompletion?(image)
         }
     }
+    
+//    private func parseImage() {
+//        guard let path = imagePath else { return  }
+//        NetworkOperation.parseImage(path: path) { image in
+//            self.imageCompletion?(image)
+//            self.image = image
+//        }
+//    }
 }

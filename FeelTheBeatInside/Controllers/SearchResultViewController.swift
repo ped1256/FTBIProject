@@ -19,7 +19,7 @@ class SearchResultViewController: UIViewController, UISearchResultsUpdating, UIT
     
     public var viewDisapear: (() -> ())?
     
-    private var artists: SearchArtistsDecode? {
+    private var artists: [ArtistViewModel]? {
         didSet {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -51,15 +51,16 @@ class SearchResultViewController: UIViewController, UISearchResultsUpdating, UIT
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
         
-        NetworkOperation.search(query: text) { artists in
-            self.artists = artists
+        NetworkOperation.search(query: text) { result in
+            let artistsViewModel = result.artists.items?.compactMap({ ArtistViewModel(with: $0 )})
+            self.artists = artistsViewModel
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let items = self.artists?.artists.items else { return 0 }
+        guard let items = self.artists?.count else { return 0 }
         
-        return items.count
+        return items
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -74,9 +75,8 @@ class SearchResultViewController: UIViewController, UISearchResultsUpdating, UIT
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ArtistTableViewCell.identifier, for: indexPath) as? ArtistTableViewCell else { return UITableViewCell() }
         
-        guard let count = self.artists?.artists.items?.count, indexPath.row < count, let artist = self.artists?.artists.items?[indexPath.row] else { return UITableViewCell() }
-        
-        let artistViewModel = ArtistViewModel(with: artist)
+        guard let count = self.artists?.count, indexPath.row < count, let artistViewModel = self.artists?[indexPath.row] else { return UITableViewCell() }
+
         cell.artist = artistViewModel
         
         cell.delegate = { [weak self] artist in

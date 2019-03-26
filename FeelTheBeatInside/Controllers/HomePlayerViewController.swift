@@ -15,6 +15,12 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
             updateUI()
         }
     }
+    
+    private var activePlayer: TrackViewModel? {
+        didSet {
+            updateUI()
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +28,7 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         buildUI()
     }
     
+    private var progressView = TrackProgressView()
     private let darkView = UIView()
     
     private lazy var tableView: UITableView = {
@@ -40,15 +47,32 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
     private var searchbutton = UIButton()
     private let emptyArtistimageView = UIImageView()
     private let backgroundBlurView = UIBlurEffect()
-    private let artistImageView = UIImageView()
+    private let albumImageView = UIImageView()
     
     private lazy var transparentPlayImageView: UIImageView = {
         let l = UIImageView()
         l.translatesAutoresizingMaskIntoConstraints = false
         l.isHidden = true
-        l.image = UIImage(named: "play_buttom")
+        l.image = UIImage(named: "white_button_play")
         return l
     }()
+    
+    private lazy var nextTrackButton: UIButton = {
+        let b = UIButton()
+        b.translatesAutoresizingMaskIntoConstraints = false
+        b.setImage(UIImage(named: "next_track_icon"), for: .normal)
+        b.isHidden = true
+        return b
+    }()
+    
+    private lazy var previousTrackButton: UIButton = {
+        let b = UIButton()
+        b.translatesAutoresizingMaskIntoConstraints = false
+        b.setImage(UIImage(named: "previous_track_icon"), for: .normal)
+        b.isHidden = true
+        return b
+    }()
+    
     
     private let spotifyWhiteLogo: UIImageView = {
         let i = UIImageView()
@@ -59,6 +83,16 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
     }()
     
     private let artistNameLabel = UILabel()
+    
+    private let trackNameLabel: UILabel = {
+        let t = UILabel()
+        
+        t.textColor = UIColor.white.withAlphaComponent(0.8)
+        t.font = UIFont.systemFont(ofSize: 14)
+        t.isHidden = true
+        
+        return t
+    }()
     
     private lazy var searchController: UISearchController = {
         
@@ -102,7 +136,7 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         buildArtistInfo()
         buildTableView()
         buildSpotifyWhiteLogo()
-        buildTransparentPlayImageView()
+        buildControlButtons()
         buildDarkView()
     }
     
@@ -126,43 +160,60 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
     }
     
     private func buildArtistInfo() {
-        view.addSubview(artistImageView)
+        view.addSubview(albumImageView)
         view.addSubview(artistNameLabel)
+        view.addSubview(trackNameLabel)
         
-        artistImageView.translatesAutoresizingMaskIntoConstraints = false
-        artistImageView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 3.5).isActive = true
-        artistImageView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 3.5).isActive = true
-        artistImageView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        
+        albumImageView.translatesAutoresizingMaskIntoConstraints = false
+        albumImageView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 3.5).isActive = true
+        albumImageView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 3.5).isActive = true
+        albumImageView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         if UIScreen.isIphoneX() {
-            artistImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 88).isActive = true
+            albumImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 88).isActive = true
         } else {
-            artistImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 64).isActive = true
+            albumImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 64).isActive = true
         }
         
-        artistImageView.clipsToBounds = true
-        artistImageView.backgroundColor = #colorLiteral(red: 0.3227999919, green: 0.3495026053, blue: 0.3882948697, alpha: 1)
-        artistImageView.isHidden = true
+        albumImageView.clipsToBounds = true
+        albumImageView.backgroundColor = #colorLiteral(red: 0.3227999919, green: 0.3495026053, blue: 0.3882948697, alpha: 1)
+        albumImageView.isHidden = true
         
         artistNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        artistNameLabel.leftAnchor.constraint(equalTo: artistImageView.rightAnchor, constant: 20).isActive = true
+        artistNameLabel.leftAnchor.constraint(equalTo: albumImageView.rightAnchor, constant: 20).isActive = true
         artistNameLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -65).isActive = true
-        artistNameLabel.topAnchor.constraint(equalTo: artistImageView.topAnchor, constant: 15).isActive = true
+        artistNameLabel.topAnchor.constraint(equalTo: albumImageView.topAnchor, constant: 15).isActive = true
         artistNameLabel.textColor = .white
         artistNameLabel.isHidden = true
+        
+        trackNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        trackNameLabel.leftAnchor.constraint(equalTo: albumImageView.rightAnchor, constant: 20).isActive = true
+        trackNameLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -65).isActive = true
+        trackNameLabel.topAnchor.constraint(equalTo: artistNameLabel.bottomAnchor, constant: 10).isActive = true
 
     }
     
     private func updateUI() {
         DispatchQueue.main.async {
             self.artistNameLabel.text = self.artist?.name
-            self.artistImageView.image = self.artist?.image
+            self.albumImageView.image = self.artist?.image
             self.artistNameLabel.isHidden = false
-            self.artistImageView.isHidden = false
+            self.albumImageView.isHidden = false
             self.emptyArtistimageView.isHidden = true
             self.spotifyWhiteLogo.isHidden = false
-            self.transparentPlayImageView.isHidden = false
-            
             self.tableView.reloadData()
+            
+            guard let player = self.activePlayer else { return }
+            
+            if player.isPlaying {
+                self.trackNameLabel.text = self.activePlayer?.name
+                self.albumImageView.image = self.activePlayer?.image
+                self.transparentPlayImageView.isHidden = false
+                self.nextTrackButton.isHidden = false
+                self.previousTrackButton.isHidden = false
+                self.progressView.isHidden = false
+                self.trackNameLabel.isHidden = false
+            }
         }
     }
     
@@ -170,9 +221,9 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         self.view.addSubview(tableView)
         tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
         tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
-        tableView.topAnchor.constraint(equalTo: artistImageView.bottomAnchor, constant: 15).isActive = true
+        tableView.topAnchor.constraint(equalTo: albumImageView.bottomAnchor, constant: 15).isActive = true
         tableView.separatorStyle = .none
-        tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -100).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
     }
     
     private func buildSpotifyWhiteLogo() {
@@ -181,15 +232,42 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         spotifyWhiteLogo.widthAnchor.constraint(equalToConstant: 25).isActive = true
         spotifyWhiteLogo.topAnchor.constraint(equalTo: artistNameLabel.topAnchor).isActive = true
         spotifyWhiteLogo.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20).isActive = true
-        
     }
     
-    private func buildTransparentPlayImageView() {
+    private func buildProgressView() {
+        view.addSubview(progressView)
+        progressView.translatesAutoresizingMaskIntoConstraints = false
+        
+        progressView.leftAnchor.constraint(equalTo: previousTrackButton.rightAnchor, constant: 10).isActive = true
+        progressView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -60).isActive = true
+        progressView.layer.cornerRadius = 2
+        progressView.heightAnchor.constraint(equalToConstant: 4).isActive = true
+        progressView.centerYAnchor.constraint(equalTo: previousTrackButton.centerYAnchor).isActive = true
+    }
+    
+    private func buildControlButtons() {
         view.addSubview(transparentPlayImageView)
-        transparentPlayImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        transparentPlayImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        transparentPlayImageView.centerYAnchor.constraint(equalTo: artistImageView.centerYAnchor).isActive = true
-        transparentPlayImageView.centerXAnchor.constraint(equalTo: artistImageView.centerXAnchor).isActive = true
+        view.addSubview(nextTrackButton)
+        view.addSubview(previousTrackButton)
+        
+        transparentPlayImageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        transparentPlayImageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        transparentPlayImageView.centerYAnchor.constraint(equalTo: albumImageView.centerYAnchor).isActive = true
+        transparentPlayImageView.centerXAnchor.constraint(equalTo: albumImageView.centerXAnchor).isActive = true
+        
+        previousTrackButton.leftAnchor.constraint(equalTo: artistNameLabel.leftAnchor).isActive = true
+        previousTrackButton.heightAnchor.constraint(equalToConstant: 15).isActive = true
+        previousTrackButton.widthAnchor.constraint(equalToConstant: 15).isActive = true
+        previousTrackButton.bottomAnchor.constraint(equalTo: albumImageView.bottomAnchor, constant: -10).isActive = true
+        
+        buildProgressView()
+        
+        nextTrackButton.leftAnchor.constraint(equalTo: progressView.rightAnchor, constant: 10).isActive = true
+        nextTrackButton.heightAnchor.constraint(equalToConstant: 15).isActive = true
+        nextTrackButton.widthAnchor.constraint(equalToConstant: 15).isActive = true
+        nextTrackButton.bottomAnchor.constraint(equalTo: previousTrackButton.bottomAnchor).isActive = true
+        
+        
     }
     
     @objc private func searchBarAction(_ sender: Any) {
@@ -203,7 +281,9 @@ extension HomePlayerViewController: SearchResultViewControllerDelegate {
         guard let id = artist.id else { return }
         
         NetworkOperation.getArtistTracks(path: id) { result in
-            self.artist?.tracks = result.tracks
+            let tracksViewModel = result.tracks.map({ TrackViewModel(with: $0) })
+            self.artist?.tracks = tracksViewModel
+            
             self.updateUI()
         }
         
@@ -223,12 +303,30 @@ extension HomePlayerViewController: UITableViewDelegate, UITableViewDataSource {
         return 55
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.artist?.tracks?.forEach({ track in
+            track.isPlaying = false
+        })
+        
+        guard let trackViewModel = self.artist?.tracks?[indexPath.row] else { return }
+        
+        NotificationCenter.default.post(Notification(name: .playItemNotificationName, object: trackViewModel.uri, userInfo: nil))
+
+        trackViewModel.isPlaying = true
+
+        self.activePlayer = trackViewModel
+        progressView.changeState(state: .stoped)
+        progressView.start(track: trackViewModel)
+        
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TrackTableViewCell.identifier, for: indexPath) as? TrackTableViewCell else { return UITableViewCell() }
         
-        guard let track = self.artist?.tracks?[indexPath.row] else { return UITableViewCell() }
+        guard let trackViewModel = self.artist?.tracks?[indexPath.row] else { return UITableViewCell() }
+        
         cell.trackCount = indexPath.row + 1
-        cell.track = track
+        cell.trackViewModel = trackViewModel
         
         return cell
     }
