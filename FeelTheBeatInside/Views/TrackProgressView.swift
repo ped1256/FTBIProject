@@ -14,8 +14,6 @@ enum ProgressState {
 
 class TrackProgressView: UIView {
     
-    let barWidth = UIScreen.main.bounds.width - UIScreen.main.bounds.width / 3.5
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         buildUI()
@@ -38,7 +36,7 @@ class TrackProgressView: UIView {
     }()
 
     private lazy var progressViewContent: UIView = {
-        let p = UIView(frame: CGRect(x: 0, y: 0, width: barWidth, height: 3))
+        let p = UIView(frame: CGRect(x: 0, y: 0, width: self.frame.width, height: 3))
         p.backgroundColor = #colorLiteral(red: 0.3227999919, green: 0.3495026053, blue: 0.3882948697, alpha: 1)
         p.translatesAutoresizingMaskIntoConstraints = false
         p.isHidden = true
@@ -60,7 +58,7 @@ class TrackProgressView: UIView {
         progressView.isHidden = false
         progressView.frame = CGRect(x: 0, y: 0, width: 0, height: 3)
         self.animator = UIViewPropertyAnimator(duration: TimeInterval(time / 1000), curve: .easeInOut) {
-            self.progressView.frame = CGRect(x: 0, y: 0, width: self.barWidth, height: 3)
+            self.progressView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: 3)
             self.layoutIfNeeded()
         }
     }

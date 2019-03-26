@@ -116,11 +116,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SPTSessionManagerDelegate
     
     func playerStateDidChange(_ playerState: SPTAppRemotePlayerState) {
         // update state here
+        // this state dont called in all time, because that i created my personal progressview state.
         debugPrint("Track name: %@", playerState.playbackPosition)
     }
     
     var window: UIWindow?
-
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         

@@ -25,6 +25,7 @@
 		FAA876E722498C3A00EEF488 /* TrackProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA876E622498C3A00EEF488 /* TrackProgressView.swift */; };
 		FAA876EB224A610A00EEF488 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA876EA224A610A00EEF488 /* Utils.swift */; };
 		FAA876ED224A646800EEF488 /* PlayerControll.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA876EC224A646800EEF488 /* PlayerControll.swift */; };
+		FAA876EF224A8DCC00EEF488 /* SearchArtistsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA876EE224A8DCC00EEF488 /* SearchArtistsButton.swift */; };
 		FAC65018224570800079A670 /* ArtistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC65017224570800079A670 /* ArtistTableViewCell.swift */; };
 		FAC6501A2245E1AF0079A670 /* SpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC650192245E1AF0079A670 /* SpinnerView.swift */; };
 		FAC65021224704E70079A670 /* ArtistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC65020224704E70079A670 /* ArtistViewModel.swift */; };
@@ -52,6 +53,7 @@
 		FAA876E622498C3A00EEF488 /* TrackProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackProgressView.swift; sourceTree = "<group>"; };
 		FAA876EA224A610A00EEF488 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		FAA876EC224A646800EEF488 /* PlayerControll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerControll.swift; sourceTree = "<group>"; };
+		FAA876EE224A8DCC00EEF488 /* SearchArtistsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchArtistsButton.swift; sourceTree = "<group>"; };
 		FAC65017224570800079A670 /* ArtistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistTableViewCell.swift; sourceTree = "<group>"; };
 		FAC650192245E1AF0079A670 /* SpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerView.swift; sourceTree = "<group>"; };
 		FAC65020224704E70079A670 /* ArtistViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistViewModel.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 			children = (
 				FAC650192245E1AF0079A670 /* SpinnerView.swift */,
 				FAA876E622498C3A00EEF488 /* TrackProgressView.swift */,
+				FAA876EE224A8DCC00EEF488 /* SearchArtistsButton.swift */,
 				FAC65017224570800079A670 /* ArtistTableViewCell.swift */,
 				FAA876DE2248604D00EEF488 /* TrackTableViewCell.swift */,
 			);
@@ -237,6 +240,7 @@
 				FA8838F72242EDA00085E4FD /* FeelTheBeatInside.xcdatamodeld in Sources */,
 				FA8838F12242ED9F0085E4FD /* AuthenticationViewController.swift in Sources */,
 				FAC65018224570800079A670 /* ArtistTableViewCell.swift in Sources */,
+				FAA876EF224A8DCC00EEF488 /* SearchArtistsButton.swift in Sources */,
 				FAA876E722498C3A00EEF488 /* TrackProgressView.swift in Sources */,
 				FAC65021224704E70079A670 /* ArtistViewModel.swift in Sources */,
 				FA8839112243CCC00085E4FD /* HomePlayerViewController.swift in Sources */,

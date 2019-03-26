@@ -52,7 +52,6 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         return t
     }()
     
-    private var searchbutton = UIButton()
     private let emptyArtistimageView = UIImageView()
     private let backgroundBlurView = UIBlurEffect()
     private let albumImageView = UIImageView()
@@ -84,13 +83,7 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         return b
     }()
     
-    private let spotifyWhiteLogo: UIImageView = {
-        let i = UIImageView()
-        i.translatesAutoresizingMaskIntoConstraints = false
-        i.image = UIImage(named: "Spotify_Icon_RGB_White")
-        i.isHidden = true
-        return i
-    }()
+    private var searchArtistButton = SearchArtistsButton()
     
     private let artistNameLabel = UILabel()
     
@@ -110,6 +103,12 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         
         searchResultController.viewDisapear = { [weak self] in
             self?.darkView.isHidden = true
+            
+            if let count = self?.artist?.tracks?.count, count == 0 {
+                self?.searchArtistButton.alpha = 1.0
+            } else {
+                self?.searchArtistButton.isHidden = true
+            }
         }
         
         let searchController = UISearchController(searchResultsController: searchResultController)
@@ -130,10 +129,10 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
             }
         }
         
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes([NSAttributedString.Key(rawValue: NSAttributedString.Key.foregroundColor.rawValue): UIColor.black], for: .normal)
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes([NSAttributedString.Key(rawValue: NSAttributedString.Key.foregroundColor.rawValue): #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)], for: .normal)
         
         if let searchbarCancelButton = searchController.searchBar.value(forKey: "_cancelButton") as? UIButton {
-            searchbarCancelButton.setTitleColor(.black, for: .normal)
+            searchbarCancelButton.setTitleColor(#colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1), for: .normal)
         }
         
         searchResultController.delegate = self
@@ -145,9 +144,9 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         buildNavigation()
         buildArtistInfo()
         buildTableView()
-        buildSpotifyWhiteLogo()
         buildControlButtons()
         buildDarkView()
+        buildSearchButton()
     }
     
     private func buildNavigation() {
@@ -155,10 +154,20 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         self.navigationItem.hidesBackButton = true
         
         let item = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchBarAction))
-        item.tintColor = .black
+        item.tintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.1782757183, green: 0.193023016, blue: 0.2144471764, alpha: 1)
         navigationItem.title = "Artistas"
         navigationItem.setRightBarButton(item, animated: true)
+    }
+    
+    private func buildSearchButton() {
+        self.view.addSubview(searchArtistButton)
+        searchArtistButton.heightAnchor.constraint(equalToConstant: 64).isActive = true
+        searchArtistButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        searchArtistButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        searchArtistButton.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 100).isActive = true
+        searchArtistButton.rightAnchor.constraint(equalTo: self.view.leftAnchor, constant: -100).isActive = true
+        searchArtistButton.addTarget(self, action: #selector(searchBarAction), for: .touchUpInside)
     }
     
     private func buildDarkView() {
@@ -210,7 +219,6 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
             self.artistNameLabel.isHidden = false
             self.albumImageView.isHidden = false
             self.emptyArtistimageView.isHidden = true
-            self.spotifyWhiteLogo.isHidden = false
             self.tableView.reloadData()
             
             guard let player = self.activePlayer else { return }
@@ -240,14 +248,6 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         tableView.topAnchor.constraint(equalTo: albumImageView.bottomAnchor, constant: 15).isActive = true
         tableView.separatorStyle = .none
         tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-    }
-    
-    private func buildSpotifyWhiteLogo() {
-        view.addSubview(spotifyWhiteLogo)
-        spotifyWhiteLogo.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        spotifyWhiteLogo.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        spotifyWhiteLogo.topAnchor.constraint(equalTo: artistNameLabel.topAnchor).isActive = true
-        spotifyWhiteLogo.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20).isActive = true
     }
     
     private func buildProgressView() {
@@ -289,6 +289,7 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
     
     @objc private func searchBarAction(_ sender: Any) {
         self.darkView.isHidden = false
+        self.searchArtistButton.alpha = 0.3
         present(searchController, animated: true, completion: nil)
     }
     
