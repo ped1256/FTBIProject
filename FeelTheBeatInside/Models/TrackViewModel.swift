@@ -19,6 +19,7 @@ class TrackViewModel: NSObject {
     var imagePath: String?
     var imageCompletion: ((UIImage) -> ())?
     var isPlaying = false
+    var trackPosition = 0
     
     var formattedMsTime: String {
         guard let msTime = self.msTime else{ return "" }

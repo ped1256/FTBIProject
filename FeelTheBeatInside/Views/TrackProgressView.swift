@@ -9,7 +9,7 @@
 import Foundation
 
 enum ProgressState {
-    case stoped, paused, animating
+    case stoped, paused, animating, resume
 }
 
 class TrackProgressView: UIView {
@@ -75,12 +75,15 @@ class TrackProgressView: UIView {
             animator?.startAnimation()
         case .paused:
             animator?.pauseAnimation()
+        case .resume:
+            animator?.pauseAnimation()
         case .stoped:
             animator?.stopAnimation(true)
         }
     }
     
     func start(track: TrackViewModel) {
+        changeState(state: .stoped)
         prepareAnimation(track: track)
         animator?.startAnimation()
     }

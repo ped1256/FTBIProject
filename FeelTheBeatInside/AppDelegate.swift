@@ -52,27 +52,57 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SPTSessionManagerDelegate
         UserDefaults.standard.set(session.accessToken, forKey: Constants.userDefaultsAccessTokenKey)
         NotificationCenter.default.post(Notification(name: .finishedSessionNotificationName))
         
-        NotificationCenter.default.addObserver(self, selector: #selector(play(_:)), name: .playItemNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(playerControlAction(_:)), name: .playItemNotificationName, object: nil)
     }
     
     func sessionManager(manager: SPTSessionManager, didFailWith error: Error) {
         
     }
     
-    @objc private func play(_ notification: NSNotification){
-        guard let uri = notification.object as? String else { return }
+    @objc private func playerControlAction(_ notification: NSNotification) {
+        guard let playerControll = notification.object as? PlayerControl else { return }
+        
+        switch playerControll.state {
+        case .pause:
+            self.pause()
+        case .play:
+            self.play(uri: playerControll.trackURI)
+        case .resume:
+            self.resume()
+        default:
+            break
+        }
+    }
+    
+    @objc private func play(uri: String){
         self.appRemote.playerAPI?.play(uri, callback: nil)
     }
     
-    func appRemoteDidEstablishConnection(_ appRemote: SPTAppRemote) {
-        // Connection was successful, you can begin issuing commands
+    @objc private func pause(){
         self.appRemote.playerAPI?.pause(nil)
+    }
+    
+    @objc private func resume(){
+        self.appRemote.playerAPI?.resume(nil)
+    }
+    
+    @objc private func previous(){
+        self.appRemote.playerAPI?.skip(toPrevious: nil)
+    }
+    var shouldPauseInStart: Bool = true
+    
+    func appRemoteDidEstablishConnection(_ appRemote: SPTAppRemote) {
+        if shouldPauseInStart {
+            self.appRemote.playerAPI?.pause(nil)
+        }
         self.appRemote.playerAPI?.delegate = self
         self.appRemote.playerAPI?.subscribe(toPlayerState: { (result, error) in
             if let error = error {
                 debugPrint(error.localizedDescription)
             }
         })
+
+        shouldPauseInStart = false
 
     }
     
@@ -87,7 +117,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SPTSessionManagerDelegate
     func playerStateDidChange(_ playerState: SPTAppRemotePlayerState) {
         // update state here
         debugPrint("Track name: %@", playerState.playbackPosition)
-        
     }
     
     var window: UIWindow?
@@ -99,8 +128,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SPTSessionManagerDelegate
         
         let nav = UINavigationController()
         
-//        let launchScreen = AuthenticationViewController()
-        let launchScreen = HomePlayerViewController()
+        let launchScreen = AuthenticationViewController()
+//        let launchScreen = HomePlayerViewController()
         nav.isNavigationBarHidden = true
         nav.viewControllers = [launchScreen]
         

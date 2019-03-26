@@ -22,10 +22,18 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         }
     }
 
+   private var shouldShowArtistImage = true
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = #colorLiteral(red: 0.1782757183, green: 0.193023016, blue: 0.2144471764, alpha: 1)
         buildUI()
+    }
+    
+    private var playerControl: PlayerControl? {
+        didSet {
+            NotificationCenter.default.post(Notification(name: .playItemNotificationName, object: playerControl, userInfo: nil))
+        }
     }
     
     private var progressView = TrackProgressView()
@@ -53,6 +61,7 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         let l = UIImageView()
         l.translatesAutoresizingMaskIntoConstraints = false
         l.isHidden = true
+        l.isUserInteractionEnabled = true
         l.image = UIImage(named: "white_button_play")
         return l
     }()
@@ -62,6 +71,7 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         b.translatesAutoresizingMaskIntoConstraints = false
         b.setImage(UIImage(named: "next_track_icon"), for: .normal)
         b.isHidden = true
+        b.addTarget(self, action: #selector(nextTrackAction), for: .touchUpInside)
         return b
     }()
     
@@ -70,9 +80,9 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         b.translatesAutoresizingMaskIntoConstraints = false
         b.setImage(UIImage(named: "previous_track_icon"), for: .normal)
         b.isHidden = true
+        b.addTarget(self, action: #selector(previousTrackAction), for: .touchUpInside)
         return b
     }()
-    
     
     private let spotifyWhiteLogo: UIImageView = {
         let i = UIImageView()
@@ -206,13 +216,19 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
             guard let player = self.activePlayer else { return }
             
             if player.isPlaying {
+                if self.shouldShowArtistImage {
+                    self.albumImageView.image = self.activePlayer?.image
+                }
+                
                 self.trackNameLabel.text = self.activePlayer?.name
-                self.albumImageView.image = self.activePlayer?.image
                 self.transparentPlayImageView.isHidden = false
                 self.nextTrackButton.isHidden = false
                 self.previousTrackButton.isHidden = false
                 self.progressView.isHidden = false
                 self.trackNameLabel.isHidden = false
+                self.transparentPlayImageView.image = UIImage(named: "white_button_pause")
+            } else {
+                self.transparentPlayImageView.image = UIImage(named: "white_button_play")
             }
         }
     }
@@ -255,6 +271,8 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         transparentPlayImageView.centerYAnchor.constraint(equalTo: albumImageView.centerYAnchor).isActive = true
         transparentPlayImageView.centerXAnchor.constraint(equalTo: albumImageView.centerXAnchor).isActive = true
         
+        transparentPlayImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pauseAndPlayTrackAction)))
+        
         previousTrackButton.leftAnchor.constraint(equalTo: artistNameLabel.leftAnchor).isActive = true
         previousTrackButton.heightAnchor.constraint(equalToConstant: 15).isActive = true
         previousTrackButton.widthAnchor.constraint(equalToConstant: 15).isActive = true
@@ -267,12 +285,69 @@ class HomePlayerViewController: UIViewController, UISearchBarDelegate {
         nextTrackButton.widthAnchor.constraint(equalToConstant: 15).isActive = true
         nextTrackButton.bottomAnchor.constraint(equalTo: previousTrackButton.bottomAnchor).isActive = true
         
-        
     }
     
     @objc private func searchBarAction(_ sender: Any) {
         self.darkView.isHidden = false
         present(searchController, animated: true, completion: nil)
+    }
+    
+    @objc private func nextTrackAction() {
+        controlButtonActions(state: .next)
+    }
+    
+    @objc private func previousTrackAction() {
+        controlButtonActions(state: .previous)
+    }
+    
+    private func controlButtonActions(state: PlayerStates) {
+        guard let activePlayer = activePlayer, activePlayer.trackPosition > 0, activePlayer.trackPosition < 11 else { return }
+        
+        var nextPlayer = activePlayer
+        
+        if state == .next  {
+            guard let player = artist?.tracks?[activePlayer.trackPosition + 1] else { return }
+            nextPlayer = player
+            nextPlayer.trackPosition = activePlayer.trackPosition + 1
+        } else if state == .previous {
+            guard let player = artist?.tracks?[activePlayer.trackPosition - 1] else { return }
+            nextPlayer = player
+            nextPlayer.trackPosition = activePlayer.trackPosition - 1
+        }
+
+        guard let uri = nextPlayer.uri else { return }
+        clearPlayerStates()
+        
+        nextPlayer.isPlaying = true
+        progressView.start(track: nextPlayer)
+        self.activePlayer = nextPlayer
+        let playerControl = PlayerControl.init(isPlaying: nextPlayer.isPlaying, state: .play, trackURI: uri)
+        self.playerControl = playerControl
+    }
+    
+    @objc private func pauseAndPlayTrackAction() {
+        guard let activePlayer = activePlayer, let uri = activePlayer.uri else { return }
+        
+        let state = activePlayer.isPlaying ? PlayerStates.pause : PlayerStates.resume
+        let playerControl = PlayerControl.init(isPlaying: activePlayer.isPlaying, state: state, trackURI: uri)
+        activePlayer.isPlaying = state == .pause ? false : true
+        
+        var progressState: ProgressState = .paused
+        
+        if state == .resume {
+            progressState = .animating
+        }
+
+        progressView.changeState(state: progressState)
+        
+        self.activePlayer = activePlayer
+        self.playerControl = playerControl
+    }
+    
+    private func clearPlayerStates() {
+        self.artist?.tracks?.forEach({ track in
+            track.isPlaying = false
+        })
     }
 }
 
@@ -309,13 +384,15 @@ extension HomePlayerViewController: UITableViewDelegate, UITableViewDataSource {
         })
         
         guard let trackViewModel = self.artist?.tracks?[indexPath.row] else { return }
+        guard let uri = trackViewModel.uri else { return }
         
-        NotificationCenter.default.post(Notification(name: .playItemNotificationName, object: trackViewModel.uri, userInfo: nil))
-
+        let playerControl = PlayerControl(isPlaying: trackViewModel.isPlaying, state: .play, trackURI: uri)
+        self.playerControl = playerControl
         trackViewModel.isPlaying = true
-
+        shouldShowArtistImage = false
+        trackViewModel.trackPosition = indexPath.row
+        
         self.activePlayer = trackViewModel
-        progressView.changeState(state: .stoped)
         progressView.start(track: trackViewModel)
         
     }
