@@ -128,29 +128,4 @@ public final class SpinnerView: UIView {
         spinnerLayer.transform = CATransform3DMakeScale(0, 0, 0)
         spinnerLayer.fillColor = UIColor.clear.cgColor
     }
-    
-//    private func showValid() {
-//        UIView.animate(withDuration: Animation.duration, delay: 0, usingSpringWithDamping: Animation.damping, initialSpringVelocity: Animation.velocity, options: [], animations: {
-//            self.stateImageView.transform = CGAffineTransform.identity
-//            self.stateImageView.image = UIImage.cartKitImage(named: "checkmark")
-//            self.stateImageView.alpha = 1
-//            self.layoutIfNeeded()
-//        }, completion: nil)
-//
-//        spinnerLayer.fillColor = UIColor.cartSuccess.cgColor
-//        spinnerLayer.lineWidth = 0
-//    }
-    
-//    private func showInvalid() {
-//        UIView.animate(withDuration: Animation.duration, delay: 0, usingSpringWithDamping: Animation.damping, initialSpringVelocity: Animation.velocity, options: [], animations: {
-//            self.stateImageView.transform = CGAffineTransform.identity
-//            self.stateImageView.image = UIImage.cartKitImage(named: "errorX")
-//            self.stateImageView.alpha = 1
-//            self.layoutIfNeeded()
-//        }, completion: nil)
-//
-//        spinnerLayer.fillColor = UIColor.cartError.cgColor
-//        spinnerLayer.lineWidth = 0
-//    }
-    
 }
